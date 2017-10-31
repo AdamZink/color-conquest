@@ -1,9 +1,9 @@
 from grid import Grid
 from render import renderGrid, exportVideo
 
-gridRows = 16
+gridRows = 8
 gridColumns = 16
-cellSize = 20
+cellSize = 30
 gridHueList = [0, 120, 240]
 
 startingCellsWithUnits = 2*len(gridHueList)

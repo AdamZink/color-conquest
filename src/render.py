@@ -34,7 +34,7 @@ def renderGrid(g, imgName, cellSize):
 		f.write('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="' + str(int(g.columns*cellSize)) + '" height="' + str(int(g.rows*cellSize)) + '">\n')
 		f.write('<g>\n')
 
-		#f.write('\t<rect x="0" y="0" width="100" height="100" />\n\n')
+		f.write('\t<rect x="0" y="0" width="' + str(int(cellSize*g.columns)) + '" height="' + str(int(cellSize*g.rows)) + '" style="fill:rgb(0,0,0)" />\n\n')
 
 		allUnits = 0
 		for row in range(g.rows):
@@ -61,13 +61,14 @@ def renderGrid(g, imgName, cellSize):
 						elif(saturation > 0):
 							saturation -= 0.25
 
-				lightness = 1.0 - (1.0 / ((unitSum + 1)**lightnessPower))
-				#print((getNormalizedHue(compositeHue), saturation, lightness))
-				rgbTuple = hsv2rgb(getNormalizedHue(compositeHue), saturation, lightness)
+				if(unitSum > 0):
+					lightness = 1.0 - (1.0 / ((unitSum + 1)**lightnessPower))
+					#print((getNormalizedHue(compositeHue), saturation, lightness))
+					rgbTuple = hsv2rgb(getNormalizedHue(compositeHue), saturation, lightness)
 
-				f.write('\t<rect x="' + str(int(column*cellSize)) + '" y="' + str(int(row*cellSize)) + '" width="' + str(int(cellSize)) + '" height="' + str(int(cellSize)) + '" style="fill:' + rgbTupleToSvgString(rgbTuple) + '" />\n')
+					f.write('\t<rect x="' + str(int(column*cellSize)) + '" y="' + str(int(row*cellSize)) + '" width="' + str(int(cellSize)) + '" height="' + str(int(cellSize)) + '" style="fill:' + rgbTupleToSvgString(rgbTuple) + '" />\n')
 
-				allUnits += unitSum
+					allUnits += unitSum
 
 		f.write('</g>\n</svg>\n')
 
