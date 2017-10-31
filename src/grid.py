@@ -6,7 +6,11 @@ class Grid:
 		self.rows = rows
 		self.columns = columns
 		self.colors = colors
-		self.grid = np.zeros(shape=(rows, columns, colors, 2))
+		# There are 3 attributes for each of the color cells:
+		# 1) hue
+		# 2) units
+		# 3) collective experience (cannot be higher than 10 times the number of units?)
+		self.grid = np.zeros(shape=(rows, columns, colors, 3))
 	
 	
 	def getRowCount(self):
