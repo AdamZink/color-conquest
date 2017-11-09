@@ -1,15 +1,15 @@
 from grid import Grid
 from render import renderGrid, exportVideo
 
-gridRows = 8
+gridRows = 12
 gridColumns = 16
-cellSize = 30
+cellSize = 20
 gridHueList = [0, 120, 240]
 
-startingCellsWithUnits = 2*len(gridHueList)
-startingUnitCountPerCell = 1
+startingCellsWithUnits = 4*len(gridHueList)
+startingUnitCountPerCell = 100
 
-numberOfRounds = 8
+numberOfRounds = 16
 
 grid = Grid(gridRows, gridColumns, gridHueList)
 grid.setRandom(startingCellsWithUnits / (1.0* gridRows * gridColumns), startingUnitCountPerCell)
