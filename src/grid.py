@@ -177,20 +177,21 @@ class Grid:
 						# print('Debug - Center: (' + str(row) + ', ' + str(column) + ')')
 						# print('Debug - Move choices: ' + str(moveChoices))
 
-						moveIndices = []
+						moveIndexChoices = []
 						if(len(moveChoices) > 0):
-							moveIndices = np.random.choice(len(moveChoices), unitCount, p=[x[2] for x in self.moveDictionary[hue][encodedNeighborhood]])
+							moveIndexChoices = np.random.choice(len(moveChoices), unitCount, p=[x[2] for x in self.moveDictionary[hue][encodedNeighborhood]])
+							moveIndices, moveCount = np.unique(moveIndexChoices, return_counts=True)
 
 						# resolve the moves to row and column indexes, but exclude "moves" where the unit is actually staying in place with 0,0 offset
-						moveOffsets = [(moveChoices[i][0], moveChoices[i][1]) for i in moveIndices if moveChoices[i][0] != 0 or moveChoices[i][1] != 0]
+						moveOffsets = [((moveChoices[moveIndices[i]][0], moveChoices[moveIndices[i]][1]), moveCount[i]) for i in np.arange(len(moveIndices)) if moveChoices[moveIndices[i]][0] != 0 or moveChoices[moveIndices[i]][1] != 0]
 
-						moveDestinations = [(row + rowOffset, column + columnOffset) for rowOffset, columnOffset in moveOffsets]
+						moveDestinations = [((row + rowOffset, column + columnOffset), count) for ((rowOffset, columnOffset), count) in moveOffsets]
 
 						# print('Debug - Selected move offsets: ' + str(moveOffsets))
 						# print('Debug - Selected move destinations: ' + str(moveDestinations))
 
-						for moveRow, moveColumn in moveDestinations:
-							self.grid[row, column, hueIndex, self.GRID_UNIT_INDEX] -= 1
-							self.grid[moveRow, moveColumn, hueIndex, self.GRID_UNIT_INDEX] += 1
+						for ((moveRow, moveColumn), count) in moveDestinations:
+							self.grid[row, column, hueIndex, self.GRID_UNIT_INDEX] -= count
+							self.grid[moveRow, moveColumn, hueIndex, self.GRID_UNIT_INDEX] += count
 
 			hueIndex += 1
