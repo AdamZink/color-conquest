@@ -22,6 +22,33 @@ class NeighborhoodUtil(object):
 		if (sectionRightColumn < 0):
 			sectionRightColumn = 0
 
-		print('[' + str(sectionLeftColumn) + ',' + str(sectionRightColumn) + ')')
+		#print('[' + str(sectionLeftColumn) + ',' + str(sectionRightColumn) + ')')
 
 		return np.sum(layerGrid[sectionLeftColumn:sectionRightColumn])
+
+	# return list with tuples based on the number of dimensions
+	# the direction of each tuple is positive
+	# assume dimensions equals 1 in current version of simulation
+	@classmethod
+	def getPositiveDimensionTuples(cls):
+		return [(0, 1)]
+
+	# return list with tuples based on the number of dimensions
+	# the direction of each tuple is negative
+	# assume dimensions equals 1 in current version of simulation
+	@classmethod
+	def getNegativeDimensionTuples(cls):
+		return [(0, -1)]
+
+	# return list of tuples in the order of dimensions to be encoded
+	# the first tuple value is the dimension with negative direction
+	# the second tuple value is the dimension with positive direction
+	@classmethod
+	def getDimensionEncodingTuples(cls):
+		negativeDimensionTuples = NeighborhoodUtil.getNegativeDimensionTuples()
+		positiveDimensionTuples = NeighborhoodUtil.getPositiveDimensionTuples()
+		dimensionEncodingTuples = []
+		for negativeDimensionTuple in negativeDimensionTuples:
+			for positiveDimensionTuple in positiveDimensionTuples:
+				dimensionEncodingTuples.append((negativeDimensionTuple, positiveDimensionTuple))
+		return dimensionEncodingTuples

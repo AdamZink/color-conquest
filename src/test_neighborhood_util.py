@@ -5,6 +5,7 @@ import numpy as np
 
 class TestNeighborhoodUtil(unittest.TestCase):
 
+	# Tests for getSectionSum
 	def test_is_0_getSectionSum_0(self):
 		layerGrid = np.zeros((3))
 		self.assertEqual(0, NeighborhoodUtil.getSectionSum(layerGrid, 1, 0))
@@ -52,6 +53,27 @@ class TestNeighborhoodUtil(unittest.TestCase):
 	def test_is_0_getSectionSum_10_right_all_out(self):
 		layerGrid = np.array([1, 5, 5, 5, 9])
 		self.assertEqual(0, NeighborhoodUtil.getSectionSum(layerGrid, 4, 10, 1))
+
+
+	# Tests for getPositiveDimensionTuples
+	def test_getPositiveDimensionTuples_1D(self):
+		correctTuples1D = [(0, 1)]
+		positiveDimensionTuples1D = NeighborhoodUtil.getPositiveDimensionTuples()
+		self.assertListEqual(correctTuples1D, positiveDimensionTuples1D)
+
+
+	# Tests for getNegativeDimensionTuples
+	def test_getNegativeDimensionTuples_1D(self):
+		correctTuples1D = [(0, -1)]
+		negativeDimensionTuples1D = NeighborhoodUtil.getNegativeDimensionTuples()
+		self.assertListEqual(correctTuples1D, negativeDimensionTuples1D)
+
+
+	# Tests for getDimensionEncodingTuples
+	def test_getDimensionEncodingTuples_1D(self):
+		correctTuples1D = [((0, -1), (0, 1))]
+		dimensionEncodingTuples1D = NeighborhoodUtil.getDimensionEncodingTuples()
+		self.assertListEqual(correctTuples1D, dimensionEncodingTuples1D)
 
 
 if __name__ == '__main__':

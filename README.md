@@ -7,4 +7,5 @@ The game engine will be built with a 1-dimensional simulation first, and then th
 
 #### Run tests
 Go to color-conquest/src folder, then run command:
+
 `python -m unittest`
