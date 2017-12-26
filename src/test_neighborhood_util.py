@@ -75,6 +75,18 @@ class TestNeighborhoodUtil(unittest.TestCase):
 		dimensionEncodingTuples1D = NeighborhoodUtil.getDimensionEncodingTuples()
 		self.assertListEqual(correctTuples1D, dimensionEncodingTuples1D)
 
+	# Tests for getSectionEncodingOrderTuples
+	# tuples like (dimension, n, direction)
+	def test_getSectionEncodingOrderTuples_1D_1(self):
+		correctTuples1D = [(0, 0, 1), (0, 1, -1), (0, 1, 1)]
+		sectionEncodingOrderTuples1D = NeighborhoodUtil.getSectionEncodingOrderTuples(1)
+		self.assertListEqual(correctTuples1D, sectionEncodingOrderTuples1D)
+
+	def test_getSectionEncodingOrderTuples_1D_2(self):
+		correctTuples1D = [(0, 0, 1), (0, 1, -1), (0, 1, 1), (0, 2, -1), (0, 2, 1)]
+		sectionEncodingOrderTuples1D = NeighborhoodUtil.getSectionEncodingOrderTuples(2)
+		self.assertListEqual(correctTuples1D, sectionEncodingOrderTuples1D)
+
 
 if __name__ == '__main__':
 	unittest.main()

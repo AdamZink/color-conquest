@@ -52,3 +52,17 @@ class NeighborhoodUtil(object):
 			for positiveDimensionTuple in positiveDimensionTuples:
 				dimensionEncodingTuples.append((negativeDimensionTuple, positiveDimensionTuple))
 		return dimensionEncodingTuples
+
+	# return list of tuples, e.g. (dimension, n, direction), as the section encoding order
+	# maxN: the highest n away from the center. Defaults to 1
+	@classmethod
+	def getSectionEncodingOrderTuples(cls, maxN=1):
+		dimensionEncodingTuples = NeighborhoodUtil.getDimensionEncodingTuples()
+		sectionEncodingOrderTuples = [(0, 0, 1)]
+		n = 1
+		while (n <= maxN):
+			for dimensionEncodingTuple in dimensionEncodingTuples:
+				for dimensionTuple in dimensionEncodingTuple:
+					sectionEncodingOrderTuples.append((dimensionTuple[0], n, dimensionTuple[1]))
+			n += 1
+		return sectionEncodingOrderTuples
