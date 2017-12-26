@@ -45,6 +45,14 @@ class TestNeighborhoodUtil(unittest.TestCase):
 		layerGrid = np.array([1, 5, 5, 5, 9])
 		self.assertEqual(0, NeighborhoodUtil.getSectionSum(layerGrid, 2, 3, 1))
 
+	def test_is_0_getSectionSum_10_left_all_out(self):
+		layerGrid = np.array([1, 5, 5, 5, 9])
+		self.assertEqual(0, NeighborhoodUtil.getSectionSum(layerGrid, 0, 10, -1))
+
+	def test_is_0_getSectionSum_10_right_all_out(self):
+		layerGrid = np.array([1, 5, 5, 5, 9])
+		self.assertEqual(0, NeighborhoodUtil.getSectionSum(layerGrid, 4, 10, 1))
+
 
 if __name__ == '__main__':
 	unittest.main()
