@@ -23,8 +23,41 @@ class NeighborhoodUtil(object):
 			sectionRightColumn = 0
 
 		#print('[' + str(sectionLeftColumn) + ',' + str(sectionRightColumn) + ')')
-
 		return np.sum(layerGrid[sectionLeftColumn:sectionRightColumn])
+
+	# return the sum of each section in the neighborhood
+	# layerGrid: the numpy object with a slice of the full grid
+	# layerColumn: the center index of the column in layerGrid which is the unit's location
+	# maxN: the highest n away from the center. Defaults to 1
+	# values like (dimension, n, direction, sum)
+	@classmethod
+	def getNeighborhoodSumTuples(cls, layerGrid, layerColumn, maxN=1):
+		sectionEncodingOrderTuples = NeighborhoodUtil.getSectionEncodingOrderTuples(maxN)
+		neighborhoodSumTuples = []
+
+		for sectionEncodingOrderTuple in sectionEncodingOrderTuples:
+			neighborhoodSumTuples.append(
+				sectionEncodingOrderTuple +
+				(NeighborhoodUtil.getSectionSum(layerGrid, layerColumn, sectionEncodingOrderTuple[1], sectionEncodingOrderTuple[2]),)
+			)
+		return neighborhoodSumTuples
+
+	# return the normalized sum of each section in the neighborhood
+	# layerGrid: the numpy object with a slice of the full grid
+	# layerColumn: the center index of the column in layerGrid which is the unit's location
+	# maxN: the highest n away from the center. Defaults to 1
+	# buckets: the number of divisions between 0 and 1 inclusive to normalize and take ceiling of the sums
+	# values like (dimension, n, direction, normalized sum bucket)
+	@classmethod
+	def getNormalizedNeighborhoodSumTuples(cls, layerGrid, layerColumn, maxN=1, buckets=2):
+		if (buckets < 2):
+			return []
+
+		neighborhoodSumTuples = NeighborhoodUtil.getNeighborhoodSumTuples(layerGrid, layerColumn, maxN)
+		largestSum = np.max([t[3] for t in neighborhoodSumTuples])
+		normalizedNeighborhoodSumTuples = [t[0:3] + (int(np.ceil((t[3] / largestSum) * (buckets - 1))),) for t in neighborhoodSumTuples]
+
+		return normalizedNeighborhoodSumTuples
 
 	# return list with tuples based on the number of dimensions
 	# the direction of each tuple is positive
