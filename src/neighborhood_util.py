@@ -46,7 +46,7 @@ class NeighborhoodUtil(object):
 	# layerGrid: the numpy object with a slice of the full grid
 	# layerColumn: the center index of the column in layerGrid which is the unit's location
 	# maxN: the highest n away from the center. Defaults to 1
-	# buckets: the number of divisions between 0 and 1 inclusive to normalize and take ceiling of the sums
+	# buckets: the number of divisions to normalize and take ceiling of the sums. Defaults to 2
 	# values like (dimension, n, direction, normalized sum bucket)
 	@classmethod
 	def getNormalizedNeighborhoodSumTuples(cls, layerGrid, layerColumn, maxN=1, buckets=2):
@@ -55,7 +55,11 @@ class NeighborhoodUtil(object):
 
 		neighborhoodSumTuples = NeighborhoodUtil.getNeighborhoodSumTuples(layerGrid, layerColumn, maxN)
 		largestSum = np.max([t[3] for t in neighborhoodSumTuples])
-		normalizedNeighborhoodSumTuples = [t[0:3] + (int(np.ceil((t[3] / largestSum) * (buckets - 1))),) for t in neighborhoodSumTuples]
+		normalizedNeighborhoodSumTuples = [
+			t[0:3] +
+			(0 if largestSum == 0 else int(np.ceil((t[3] / largestSum) * (buckets - 1))),)
+			for t in neighborhoodSumTuples
+		]
 
 		return normalizedNeighborhoodSumTuples
 
@@ -99,3 +103,53 @@ class NeighborhoodUtil(object):
 					sectionEncodingOrderTuples.append((dimensionTuple[0], n, dimensionTuple[1]))
 			n += 1
 		return sectionEncodingOrderTuples
+
+	# return binary value of encoded neighborhood by shifting bits to the left
+	# layerGrid: the numpy object with a slice of the full grid
+	# layerColumn: the center index of the column in layerGrid which is the unit's location
+	# maxN: the highest n away from the center. Defaults to 1
+	# buckets: the number of divisions to normalize and take ceiling of the sums. Defaults to 2
+	@classmethod
+	def getEncodedNeighborhood(cls, layerGrid, layerColumn, maxN=1, buckets=2):
+		encodedNeighborhood = 0b0
+		normalizedNeighborhoodSumTuples = NeighborhoodUtil.getNormalizedNeighborhoodSumTuples(layerGrid, layerColumn, maxN, buckets)
+		bucketBitsNeeded = (buckets - 1).bit_length()
+		for normalizedNeighborhoodSumTuple in normalizedNeighborhoodSumTuples:
+			encodedNeighborhood = (encodedNeighborhood << 2) + normalizedNeighborhoodSumTuple[3]
+		return encodedNeighborhood
+
+	# return string description of center of the neighborhood
+	@classmethod
+	def describeEncodedCenter(cls, encodedCenter):
+		if (encodedCenter > 0b0):
+			return ['The center has units']
+		else:
+			return []
+
+	# return string description of section of the neighborhood
+	@classmethod
+	def describeEncodedSection(cls, encodedSection, dimension, n, direction):
+		if (encodedSection > 0b0):
+			return ['Dimension ' + str(dimension) + ', Section ' + ('-' if direction < 0 else '+') + str(n) + ' has units']
+		else:
+			return []
+
+	# return list with string descriptions of encoded neighborhood
+	@classmethod
+	def describeEncodedNeighborhood(cls, encodedNeighborhood, maxN=1, buckets=2):
+		descriptionList = []
+		n = maxN
+		bucketBitsNeeded = (buckets - 1).bit_length()
+		while (n > 0):
+			positiveMask = (1 << bucketBitsNeeded) - 1
+			descriptionList += NeighborhoodUtil.describeEncodedSection(encodedNeighborhood & positiveMask, 0, n, 1)
+			encodedNeighborhood = encodedNeighborhood >> 2
+
+			negativeMask = (1 << bucketBitsNeeded) - 1
+			descriptionList += NeighborhoodUtil.describeEncodedSection(encodedNeighborhood & negativeMask, 0, n, -1)
+			encodedNeighborhood = encodedNeighborhood >> 2
+
+			n -= 1
+
+		descriptionList += NeighborhoodUtil.describeEncodedCenter(encodedNeighborhood)
+		return descriptionList
