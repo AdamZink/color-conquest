@@ -115,7 +115,7 @@ class NeighborhoodUtil(object):
 		normalizedNeighborhoodSumTuples = NeighborhoodUtil.getNormalizedNeighborhoodSumTuples(layerGrid, layerColumn, maxN, buckets)
 		bucketBitsNeeded = (buckets - 1).bit_length()
 		for normalizedNeighborhoodSumTuple in normalizedNeighborhoodSumTuples:
-			encodedNeighborhood = (encodedNeighborhood << 2) + normalizedNeighborhoodSumTuple[3]
+			encodedNeighborhood = (encodedNeighborhood << bucketBitsNeeded) + normalizedNeighborhoodSumTuple[3]
 		return encodedNeighborhood
 
 	# return string description of center of the neighborhood
@@ -143,11 +143,11 @@ class NeighborhoodUtil(object):
 		while (n > 0):
 			positiveMask = (1 << bucketBitsNeeded) - 1
 			descriptionList += NeighborhoodUtil.describeEncodedSection(encodedNeighborhood & positiveMask, 0, n, 1)
-			encodedNeighborhood = encodedNeighborhood >> 2
+			encodedNeighborhood = encodedNeighborhood >> bucketBitsNeeded
 
 			negativeMask = (1 << bucketBitsNeeded) - 1
 			descriptionList += NeighborhoodUtil.describeEncodedSection(encodedNeighborhood & negativeMask, 0, n, -1)
-			encodedNeighborhood = encodedNeighborhood >> 2
+			encodedNeighborhood = encodedNeighborhood >> bucketBitsNeeded
 
 			n -= 1
 

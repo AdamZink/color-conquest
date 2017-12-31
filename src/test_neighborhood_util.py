@@ -125,14 +125,14 @@ class TestNeighborhoodUtil(unittest.TestCase):
 
 	# Tests for getEncodedNeighborhood
 	def test_getEncodedNeighborhood_1D_0_with_2_buckets(self):
-		correctEncoding = 0b01
+		correctEncoding = 0b1
 		layerGrid = np.array([0, 5, 10])
 		encodedNeighborhood = NeighborhoodUtil.getEncodedNeighborhood(layerGrid, 1, 0, 2)
 		self.assertEqual(correctEncoding, encodedNeighborhood)
 
 	def test_getEncodedNeighborhood_1D_1_with_2_buckets(self):
-		correctEncoding = 0b010001
-		layerGrid = np.array([0, 5, 10])
+		correctEncoding = 0b010
+		layerGrid = np.array([1, 0])
 		encodedNeighborhood = NeighborhoodUtil.getEncodedNeighborhood(layerGrid, 1, 1, 2)
 		self.assertEqual(correctEncoding, encodedNeighborhood)
 
@@ -148,18 +148,30 @@ class TestNeighborhoodUtil(unittest.TestCase):
 		encodedNeighborhood = NeighborhoodUtil.getEncodedNeighborhood(layerGrid, 0, 10, 2)
 		self.assertEqual(correctEncoding, encodedNeighborhood)
 
+	def test_getEncodedNeighborhood_1D_2_plus_2_section(self):
+		correctEncoding = 0b00001
+		layerGrid = np.array([0, 0, 0, 1])
+		encodedNeighborhood = NeighborhoodUtil.getEncodedNeighborhood(layerGrid, 0, 2, 2)
+		self.assertEqual(correctEncoding, encodedNeighborhood)
+
 
 	# Tests for describeEncodedSection
-	def test_describeEncodedSection_positive_has_units(self):
-		encodedNeighborhood = 0b01
+	def test_describeEncodedSection_positive_1_has_units(self):
+		encodedNeighborhood = 0b001
 		correctDescriptionList = ['Dimension 0, Section +1 has units']
 		descriptionList = NeighborhoodUtil.describeEncodedSection(encodedNeighborhood, 0, 1, 1)
 		self.assertEqual(correctDescriptionList, descriptionList)
 
-	def test_describeEncodedSection_negative_has_no_units(self):
-		encodedNeighborhood = 0b00
+	def test_describeEncodedSection_negative_1_has_no_units(self):
+		encodedNeighborhood = 0b000
 		correctDescriptionList = []
 		descriptionList = NeighborhoodUtil.describeEncodedSection(encodedNeighborhood, 0, 1, -1)
+		self.assertEqual(correctDescriptionList, descriptionList)
+
+	def test_describeEncodedSection_negative_2_has_units(self):
+		encodedNeighborhood = 0b00010
+		correctDescriptionList = ['Dimension 0, Section -2 has units']
+		descriptionList = NeighborhoodUtil.describeEncodedSection(encodedNeighborhood, 0, 2, -1)
 		self.assertEqual(correctDescriptionList, descriptionList)
 
 
@@ -183,6 +195,14 @@ class TestNeighborhoodUtil(unittest.TestCase):
 			'The center has units'
 		]
 		descriptionList = NeighborhoodUtil.describeEncodedNeighborhood(encodedNeighborhood, 1, 4)
+		self.assertListEqual(correctDescriptionList, descriptionList)
+
+	def test_describeEncodedNeighborhood_2_has_units(self):
+		encodedNeighborhood = 0b00010
+		correctDescriptionList = [
+			'Dimension 0, Section -2 has units'
+		]
+		descriptionList = NeighborhoodUtil.describeEncodedNeighborhood(encodedNeighborhood, 2, 2)
 		self.assertListEqual(correctDescriptionList, descriptionList)
 
 
