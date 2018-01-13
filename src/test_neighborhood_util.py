@@ -178,7 +178,7 @@ class TestNeighborhoodUtil(unittest.TestCase):
 	# Tests for describeEncodedNeighborhood
 	def test_describeEncodedNeighborhood_0_has_units(self):
 		encodedNeighborhood = 0b1
-		correctDescriptionList = ['The center has units']
+		correctDescriptionList = ['Dimension 0, Section +0 has units']
 		descriptionList = NeighborhoodUtil.describeEncodedNeighborhood(encodedNeighborhood, 0, 2)
 		self.assertListEqual(correctDescriptionList, descriptionList)
 
@@ -192,7 +192,7 @@ class TestNeighborhoodUtil(unittest.TestCase):
 		encodedNeighborhood = 0b010011
 		correctDescriptionList = [
 			'Dimension 0, Section +1 has units',
-			'The center has units'
+			'Dimension 0, Section +0 has units'
 		]
 		descriptionList = NeighborhoodUtil.describeEncodedNeighborhood(encodedNeighborhood, 1, 4)
 		self.assertListEqual(correctDescriptionList, descriptionList)

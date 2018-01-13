@@ -118,19 +118,25 @@ class NeighborhoodUtil(object):
 			encodedNeighborhood = (encodedNeighborhood << bucketBitsNeeded) + normalizedNeighborhoodSumTuple[3]
 		return encodedNeighborhood
 
-	# return string description of center of the neighborhood
+
+	# return string description of the section with units
+	@classmethod
+	def getUnitDescription(cls, dimension, n, direction):
+		return 'Dimension ' + str(dimension) + ', Section ' + ('-' if direction < 0 else '+') + str(n) + ' has units'
+
+	# return list with description of center of the neighborhood if units are present
 	@classmethod
 	def describeEncodedCenter(cls, encodedCenter):
 		if (encodedCenter > 0b0):
-			return ['The center has units']
+			return [NeighborhoodUtil.getUnitDescription(0, 0, 1)]
 		else:
 			return []
 
-	# return string description of section of the neighborhood
+	# return list with description of section of the neighborhood if units are present
 	@classmethod
 	def describeEncodedSection(cls, encodedSection, dimension, n, direction):
 		if (encodedSection > 0b0):
-			return ['Dimension ' + str(dimension) + ', Section ' + ('-' if direction < 0 else '+') + str(n) + ' has units']
+			return [NeighborhoodUtil.getUnitDescription(dimension, n, direction)]
 		else:
 			return []
 
