@@ -1,15 +1,20 @@
 from grid_util import GridUtil as gutil
 from neighborhood_util import NeighborhoodUtil as nutil
+from grid_1D import *
+
 import numpy as np
 
-gridColumns = 4
 gridHueList = [0, 120]
+gridColumns = 4
 maxN = 2
 
-layers = np.zeros(shape=(len(gridHueList), gridColumns))
-layers[0][0] = 1
-layers[1][3] = 1
+grid = Grid1D(gridHueList, gridColumns)
+grid.grid[0][0][1] = 3
+grid.grid[1][3][1] = 3
 
+# layers = np.zeros(shape=(len(gridHueList), gridColumns))
+# layers[0][0] = 1
+# layers[1][3] = 1
 
 def testGetMoveOffset(descriptionList):
 	for description in descriptionList:
@@ -21,27 +26,37 @@ def testGetMoveOffset(descriptionList):
 
 
 print('\nInitial:')
-print(layers)
+grid.display()
 
-layers2 = np.copy(layers)
+numRounds = 4
+currentRound = 1
 
-for hueIndex in range(len(gridHueList)):
+while (currentRound <= numRounds):
+	nextGrid = Grid1D(gridHueList, gridColumns)
+	nextGrid.grid = np.copy(grid.grid[:, :, :])
+
 	for layerColumn in range(gridColumns):
-		if layers[hueIndex][layerColumn] > 0:
-			print('\nHue index ' + str(hueIndex) + ', layer column index ' + str(layerColumn) + ':')
+		for hueIndex in range(len(gridHueList)):
+			if grid.grid[hueIndex][layerColumn][1] > 0:
+				print('\nHue ' + str(grid.hueList[hueIndex]) + ', column index ' + str(layerColumn) + ':')
 
-			descriptionList = nutil.describeEncodedNeighborhood(
-				gutil.getOpposingEncodedNeighborhood(layers, hueIndex, layerColumn, maxN, buckets=2),
-				maxN, buckets=2
-			)
-			print(descriptionList)
+				print(grid.grid[:, :, 1])
+				descriptionList = nutil.describeEncodedNeighborhood(
+					gutil.getOpposingEncodedNeighborhood(grid.grid[:, :, 1], hueIndex, layerColumn, maxN, buckets=2),
+					maxN, buckets=2
+				)
+				print(descriptionList)
 
-			moveOffset = testGetMoveOffset(descriptionList)
-			print('Move: ' + str(moveOffset))
-			layers2[hueIndex][layerColumn] -= 1
-			layers2[hueIndex][layerColumn + moveOffset] += 1
+				moveOffset = testGetMoveOffset(descriptionList)
+				print('Move: ' + str(moveOffset))
+				nextGrid.grid[hueIndex][layerColumn][1] -= grid.grid[hueIndex][layerColumn][1]
+				nextGrid.grid[hueIndex][layerColumn + moveOffset] += grid.grid[hueIndex][layerColumn][1]
 
-print('\nAfter first round:')
-print(layers2)
+	print('\nAfter ' + str(currentRound) + ' round:')
+	nextGrid.display()
+	grid = nextGrid
+	currentRound += 1
+
+
 
 print('\nFinished simulation')
