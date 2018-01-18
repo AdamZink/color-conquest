@@ -29,7 +29,7 @@ def renderGrid(g, imgName, cellSize):
 	print(svgPath)
 	with open(svgPath, 'w') as f:
 		f.write('<?xml version="1.0"?>\n<!DOCTYPE svg>\n')
-		f.write('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="' + str(int(g.columns*cellSize)) + '" height="' + str(int(g.rows*cellSize)) + '">\n')
+		f.write('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="' + str(int(g.columns*cellSize)) + '" height="' + str(int(cellSize)) + '">\n')
 		f.write('<defs id="blend">\n')
 		f.write('\t<filter id="blendFilter" style="color-interpolation-filters:sRGB">\n')
 		f.write('\t\t<feBlend id="screenBlend" in2="BackgroundImage" mode="lighten" />\n')
@@ -37,29 +37,27 @@ def renderGrid(g, imgName, cellSize):
 		f.write('</defs>\n')
 
 		f.write('\n<g id="background">\n')
-		f.write('\t<rect x="0" y="0" width="' + str(int(cellSize*g.columns)) + '" height="' + str(int(cellSize*g.rows)) + '" style="fill:rgb(0,0,0)" />\n')
+		f.write('\t<rect x="0" y="0" width="' + str(int(cellSize*g.columns)) + '" height="' + str(int(cellSize)) + '" style="fill:rgb(0,0,0)" />\n')
 		f.write('</g>\n\n')
 
 		allUnits = 0
 		for hueIndex in range(len(g.hueList)):
 			f.write('\n<g id="hue' + str(g.hueList[hueIndex])+ '" style="filter:url(#blendFilter)">\n')
+			for column in range(g.columns):
 
-			for row in range(g.rows):
-				for column in range(g.columns):
+				lightness = 0.5
+				saturation = 1.0
 
-					lightness = 0.5
-					saturation = 1.0
+				opacityPower = 0.5  # make this higher to give brighter colored cells
 
-					opacityPower = 0.5  # make this higher to give brighter colored cells
+				unitCount = g.grid[hueIndex, column, g.GRID_UNIT_INDEX]
 
-					unitCount = g.grid[row, column, hueIndex, g.GRID_UNIT_INDEX]
+				if(unitCount > 0):
+					rgbTuple = hsv2rgb(getNormalizedHue(g.hueList[hueIndex]), saturation, lightness)
+					opacity = 1.0 - (1.0 / ((g.grid[hueIndex, column, g.GRID_UNIT_INDEX] + 1)**opacityPower))
 
-					if(unitCount > 0):
-						rgbTuple = hsv2rgb(getNormalizedHue(g.hueList[hueIndex]), saturation, lightness)
-						opacity = 1.0 - (1.0 / ((g.grid[row, column, hueIndex, g.GRID_UNIT_INDEX] + 1)**opacityPower))
-
-						f.write('\t<rect x="' + str(int(column*cellSize)) + '" y="' + str(int(row*cellSize)) + '" width="' + str(int(cellSize)) + '" height="' + str(int(cellSize)) + '" style="fill:' + rgbTupleToSvgString(rgbTuple) + ';opacity:' + str(opacity) + '" />\n')
-						allUnits += unitCount
+					f.write('\t<rect x="' + str(int(column*cellSize)) + '" y="' + str(int(0)) + '" width="' + str(int(cellSize)) + '" height="' + str(int(cellSize)) + '" style="fill:' + rgbTupleToSvgString(rgbTuple) + ';opacity:' + str(opacity) + '" />\n')
+					allUnits += unitCount
 
 			f.write('</g>\n')
 

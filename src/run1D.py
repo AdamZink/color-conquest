@@ -1,20 +1,19 @@
 from grid_util import GridUtil as gutil
 from neighborhood_util import NeighborhoodUtil as nutil
 from grid_1D import *
+from render import renderGrid, exportVideo
 
 import numpy as np
 
 gridHueList = [0, 120]
-gridColumns = 4
-maxN = 2
+gridColumns = 16
+maxN = 4
+cellSize = 40
 
 grid = Grid1D(gridHueList, gridColumns)
-grid.grid[0][0][1] = 3
-grid.grid[1][3][1] = 3
+grid.grid[0][1][1] = 40
+grid.grid[1][14][1] = 40
 
-# layers = np.zeros(shape=(len(gridHueList), gridColumns))
-# layers[0][0] = 1
-# layers[1][3] = 1
 
 def testGetMoveOffset(descriptionList):
 	for description in descriptionList:
@@ -24,12 +23,13 @@ def testGetMoveOffset(descriptionList):
 			return -1
 	return 0
 
+numRounds = 16
+currentRound = 1
 
 print('\nInitial:')
 grid.display()
 
-numRounds = 4
-currentRound = 1
+renderGrid(grid, 'test1D_0', cellSize)
 
 while (currentRound <= numRounds):
 	nextGrid = Grid1D(gridHueList, gridColumns)
@@ -50,13 +50,17 @@ while (currentRound <= numRounds):
 				moveOffset = testGetMoveOffset(descriptionList)
 				print('Move: ' + str(moveOffset))
 				nextGrid.grid[hueIndex][layerColumn][1] -= grid.grid[hueIndex][layerColumn][1]
-				nextGrid.grid[hueIndex][layerColumn + moveOffset] += grid.grid[hueIndex][layerColumn][1]
+				nextGrid.grid[hueIndex][layerColumn + moveOffset][1] += grid.grid[hueIndex][layerColumn][1]
 
-	print('\nAfter ' + str(currentRound) + ' round:')
+	print('\nAfter ' + str(currentRound) + ' rounds:')
 	nextGrid.display()
 	grid = nextGrid
+
+	renderGrid(grid, 'test1D_' + str(currentRound), cellSize)
+
 	currentRound += 1
 
 
+exportVideo(grid, 'test1D_', 4)
 
 print('\nFinished simulation')
